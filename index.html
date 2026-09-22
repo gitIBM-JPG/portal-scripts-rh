@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de Scripts — RH Benefícios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --p50:  #f5f3ff; --p100: #ede9fe; --p200: #ddd6fe;
+      --p300: #c4b5fd; --p400: #a78bfa; --p500: #8b5cf6;
+      --p600: #7c3aed; --p700: #6d28d9; --p800: #5b21b6;
+      --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb;
+      --g300: #d1d5db; --g400: #9ca3af; --g500: #6b7280;
+      --g700: #374151; --g800: #1f2937; --g900: #111827;
+      --green: #10b981; --amber: #f59e0b; --red: #ef4444;
+      --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 24px;
+      --sh-xs: 0 1px 3px rgba(0,0,0,.07);
+      --sh-sm: 0 2px 8px rgba(109,40,217,.08), 0 1px 3px rgba(0,0,0,.06);
+      --sh-md: 0 6px 24px rgba(109,40,217,.13), 0 2px 6px rgba(0,0,0,.05);
+      --sh-lg: 0 16px 48px rgba(109,40,217,.18), 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, "Segoe UI", sans-serif;
+      background: #f0edff; color: var(--g900);
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(150deg, #3b0764 0%, #5b21b6 40%, #7c3aed 70%, #a78bfa 100%);
+      padding: 40px 40px 68px; position: relative; overflow: hidden;
+    }
+    header::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 85% 20%, rgba(167,139,250,.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, rgba(59,7,100,.55) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 120%, rgba(124,58,237,.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    header::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 28px 28px; pointer-events: none;
+    }
+    .header-inner {
+      max-width: 900px; margin: 0 auto; position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .header-icon {
+      width: 52px; height: 52px; background: rgba(255,255,255,.18);
+      border: 1.5px solid rgba(255,255,255,.3); border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .header-text h1 { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+    .header-text p  { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 4px; }
+    .header-badge {
+      margin-left: auto; background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22); color: rgba(255,255,255,.85);
+      font-size: 11px; font-weight: 700; padding: 7px 16px; border-radius: 24px;
+      white-space: nowrap; backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      max-width: 900px; margin: -30px auto 0; padding: 0 40px; position: relative; z-index: 10;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 12px; background: #fff;
+      border: 2px solid transparent; border-radius: var(--r-md);
+      padding: 0 18px; box-shadow: var(--sh-md);
+      transition: border-color .22s, box-shadow .25s;
+    }
+    .search-box:focus-within {
+      border-color: var(--p400);
+      box-shadow: 0 0 0 4px rgba(139,92,246,.1), var(--sh-md);
+    }
+    .search-box svg { color: var(--g400); flex-shrink: 0; transition: color .2s; }
+    .search-box:focus-within svg { color: var(--p500); }
+    .search-box input {
+      flex: 1; border: none; outline: none; padding: 16px 0;
+      font-size: 14px; font-family: inherit; color: var(--g900); background: transparent;
+    }
+    .search-box input::placeholder { color: var(--g400); }
+    #clear-btn {
+      background: none; border: none; cursor: pointer; color: var(--g400);
+      font-size: 14px; display: none; padding: 4px; line-height: 1;
+      border-radius: 50%; transition: background .15s, color .15s;
+    }
+    #clear-btn:hover { background: var(--g100); color: var(--g700); }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      max-width: 900px; margin: 16px auto 0; padding: 0 40px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: #fff; border: 1.5px solid var(--g200); border-radius: 24px;
+      padding: 5px 14px; font-size: 12px; font-weight: 600; color: var(--g500);
+      cursor: pointer; font-family: inherit; transition: all .18s;
+    }
+    .filter-btn:hover { border-color: var(--p300); color: var(--p600); background: var(--p50); }
+    .filter-btn.active { background: var(--p600); border-color: var(--p600); color: #fff; }
+
+    /* ── MAIN ── */
+    main { max-width: 900px; margin: 24px auto 0; padding: 0 40px; }
+
+    .section-label {
+      font-size: 10px; font-weight: 700; color: var(--g400);
+      text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 14px;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    }
+
+    #view-cats   { display: block; }
+    #view-list   { display: none; }
+    #view-detail { display: none; }
+    #view-search { display: none; }
+
+    /* ── LOADING ── */
+    .loading-state {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 72px 0; gap: 16px;
+    }
+    .loading-spinner {
+      width: 38px; height: 38px; border: 3px solid var(--p200);
+      border-top-color: var(--p600); border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .loading-state p { font-size: 13px; color: var(--g500); font-weight: 500; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── CATEGORY LIST ── */
+    .cat-list { display: flex; flex-direction: column; gap: 8px; }
+    .cat-row {
+      background: #fff; border: 1.5px solid var(--g200); border-radius: var(--r-md);
+      padding: 16px 20px; cursor: pointer;
+      display: flex; align-items: center; gap: 16px;
+      transition: border-color .2s, transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s;
+      animation: fadeUp .35s cubic-bezier(.4,0,.2,1) both;
+      position: relative; overflow: hidden;
+    }
+    .cat-row::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: linear-gradient(180deg, var(--p700), var(--p400));
+      opacity: 0; transition: opacity .2s; border-radius: 0 2px 2px 0;
+    }
+    .cat-row:hover { border-color: var(--p300); transform: translateX(5px); box-shadow: var(--sh-sm); }
+    .cat-row:hover::before { opacity: 1; }
+    .cr-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--p100), var(--p50));
+      border: 1.5px solid var(--p200); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      transition: transform .2s cubic-bezier(.4,0,.2,1);
+    }
+    .cat-row:hover .cr-icon { transform: scale(1.08) rotate(-5deg); }
+    .cr-info { flex: 1; min-width: 0; }
+    .cr-name  { font-size: 14px; font-weight: 700; color: var(--g900); letter-spacing: -.1px; }
+    .cr-meta  { font-size: 12px; color: var(--g400); margin-top: 3px; font-weight: 500; }
+    .cr-badge {
+      font-size: 11px; font-weight: 700; color: var(--p600);
+      background: var(--p50); border: 1.5px solid var(--p200);
+      padding: 4px 13px; border-radius: 24px; white-space: nowrap; flex-shrink: 0;
+    }
+    .cr-arrow { color: var(--g300); font-size: 20px; flex-shrink: 0; transition: color .18s, transform .18s; }
+    .cat-row:hover .cr-arrow { color: var(--p500); transform: translateX(3px); }
+
+    /* ── BACK BTN ── */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: none; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--p600);
+      padding: 6px 12px 6px 8px; margin-bottom: 20px; margin-left: -8px;
+      font-family: inherit; border-radius: var(--r-sm);
+      transition: background .18s, gap .18s;
+    }
+    .back-btn:hover { background: var(--p50); gap: 11px; }
+
+    /* ── CAT HEADER ── */
+    .cat-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1.5px solid var(--g100);
+    }
+    .ch-icon {
+      width: 46px; height: 46px;
+      background: linear-gradient(135deg, var(--p100), var(--p50));
+      border: 1.5px solid var(--p200); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .cat-header h2 { font-size: 20px; font-weight: 800; color: var(--g900); letter-spacing: -.4px; }
+    .ch-count {
+      margin-left: auto; font-size: 11px; font-weight: 700; color: var(--p600);
+      background: var(--p50); border: 1.5px solid var(--p200);
+      padding: 5px 14px; border-radius: 24px;
+    }
+
+    /* ── SCRIPT LIST ── */
+    .script-items { display: flex; flex-direction: column; gap: 10px; }
+    .script-item {
+      background: #fff; border: 1.5px solid var(--g200); border-radius: var(--r-md);
+      padding: 16px 20px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; gap: 14px;
+      transition: border-color .2s, transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s;
+      animation: fadeUp .3s cubic-bezier(.4,0,.2,1) both;
+    }
+    .script-item:hover { border-color: var(--p300); transform: translateX(5px); box-shadow: var(--sh-sm); }
+    .si-name { font-size: 14px; font-weight: 700; color: var(--g900); margin-bottom: 8px; letter-spacing: -.1px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+    .tag {
+      font-size: 11px; font-weight: 600; background: var(--p50); color: var(--p600);
+      border: 1px solid var(--p200); border-radius: 20px; padding: 2px 9px;
+      transition: background .15s, border-color .15s;
+    }
+    .script-item:hover .tag { background: var(--p100); border-color: var(--p300); }
+    .si-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .si-owner { font-size: 11px; color: var(--g400); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .si-date  { font-size: 11px; color: var(--g400); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .si-arrow {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--g50); border: 1.5px solid var(--g200);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--g400); font-size: 16px;
+      transition: background .18s, border-color .18s, color .18s, transform .18s;
+    }
+    .script-item:hover .si-arrow { background: var(--p600); border-color: var(--p600); color: #fff; transform: translateX(2px); }
+
+    /* ── STATUS BADGE ── */
+    .status-badge {
+      font-size: 10px; font-weight: 700; border-radius: 12px; padding: 2px 8px;
+      display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; vertical-align: middle;
+    }
+    .status-rascunho { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .status-revisao  { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+    /* ── DETAIL ── */
+    .detail-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 16px; margin-bottom: 14px; flex-wrap: wrap;
+      padding-bottom: 20px; border-bottom: 1.5px solid var(--g100);
+    }
+    .detail-header h2 { font-size: 22px; font-weight: 800; color: var(--g900); letter-spacing: -.5px; flex: 1; }
+    .detail-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .detail-meta {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
+      padding: 12px 16px; background: var(--g50); border-radius: var(--r-sm);
+      border: 1px solid var(--g200);
+    }
+    .detail-meta-item { font-size: 12px; color: var(--g500); display: flex; align-items: center; gap: 6px; }
+    .detail-meta-item strong { color: var(--g700); font-weight: 600; }
+
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--p700), var(--p500));
+      color: #fff; border: none; border-radius: var(--r-sm);
+      padding: 11px 22px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 3px 12px rgba(109,40,217,.35);
+      transition: filter .18s, transform .15s, box-shadow .2s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover  { filter: brightness(1.1); box-shadow: 0 6px 20px rgba(109,40,217,.45); transform: translateY(-1px); }
+    .copy-btn:active { transform: scale(.97) translateY(0); }
+    .copy-btn.copied { background: linear-gradient(135deg, #059669, var(--green)); box-shadow: 0 3px 12px rgba(16,185,129,.35); filter: none; }
+
+    .edit-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; color: var(--p600); border: 1.5px solid var(--p300);
+      border-radius: var(--r-sm); padding: 10px 18px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .18s, border-color .18s, box-shadow .18s;
+    }
+    .edit-btn:hover { background: var(--p50); border-color: var(--p500); box-shadow: 0 2px 8px rgba(139,92,246,.15); }
+
+    .delete-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; color: #dc2626; border: 1.5px solid #fecaca;
+      border-radius: var(--r-sm); padding: 10px 14px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .18s, border-color .18s;
+    }
+    .delete-btn:hover { background: #fef2f2; border-color: #fca5a5; }
+
+    #sd-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .script-body {
+      background: #fff; border: 1.5px solid var(--g200); border-radius: var(--r-md);
+      padding: 28px 32px; font-size: 14px; line-height: 2; color: var(--g700);
+      white-space: pre-wrap; word-break: break-word; box-shadow: var(--sh-xs);
+    }
+
+    /* ── SEARCH RESULTS ── */
+    .result-card {
+      background: #fff; border: 1.5px solid var(--g200); border-radius: var(--r-md);
+      padding: 14px 20px; cursor: pointer; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 14px;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .result-card:hover { border-color: var(--p300); box-shadow: var(--sh-sm); transform: translateX(3px); }
+    .rc-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--p100), var(--p50));
+      border: 1.5px solid var(--p200); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .rc-name { font-size: 14px; font-weight: 700; color: var(--g900); }
+    .rc-cat  { font-size: 12px; color: var(--g400); margin-top: 3px; }
+
+    /* ── EMPTY ── */
+    .empty { text-align: center; padding: 64px 0; color: var(--g500); }
+    .empty .emoji { font-size: 48px; margin-bottom: 16px; display: block; }
+    .empty h3 { font-size: 16px; font-weight: 700; color: var(--g700); margin-bottom: 8px; }
+    .empty p { font-size: 13px; line-height: 1.6; }
+
+    /* ── ERROR ── */
+    .error-state {
+      background: #fff; border: 1.5px solid #fecaca; border-radius: var(--r-lg);
+      padding: 32px; text-align: center;
+    }
+    .error-state .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
+    .error-state h3 { font-size: 15px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
+    .error-state p  { font-size: 13px; color: var(--g500); line-height: 1.6; margin-bottom: 20px; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      max-width: 900px; margin: 44px auto 0; padding: 20px 40px 40px;
+      border-top: 1px solid var(--g200);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-info { font-size: 12px; color: var(--g400); line-height: 1.6; }
+    .footer-info strong { color: var(--g500); font-weight: 600; display: block; margin-bottom: 2px; }
+    .footer-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .db-status {
+      font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .db-status.connected    { background: #f0fdf4; color: #065f46; border: 1px solid #a7f3d0; }
+    .db-status.disconnected { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .refresh-btn {
+      background: #fff; border: 1.5px solid var(--g200); color: var(--g500);
+      border-radius: var(--r-sm); padding: 7px 14px; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: border-color .2s, color .2s, background .2s, box-shadow .2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .refresh-btn:hover { border-color: var(--p300); color: var(--p600); background: var(--p50); box-shadow: 0 2px 8px rgba(139,92,246,.1); }
+
+    /* ── NOVO SCRIPT BTN ── */
+    .novo-script-btn {
+      background: linear-gradient(135deg, var(--p700), var(--p500)); color: #fff;
+      border: none; border-radius: var(--r-sm); padding: 9px 20px;
+      font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 7px;
+      box-shadow: 0 3px 12px rgba(109,40,217,.3);
+      transition: opacity .2s, transform .15s, box-shadow .2s; white-space: nowrap;
+    }
+    .novo-script-btn:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(109,40,217,.38); }
+    .novo-script-btn:active { transform: scale(.97); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(17,24,39,.5);
+      z-index: 100; align-items: center; justify-content: center; padding: 20px;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: var(--r-xl); width: 100%; max-width: 560px;
+      box-shadow: var(--sh-lg); overflow: hidden; animation: fadeUp .22s ease;
+      max-height: 92vh; display: flex; flex-direction: column;
+    }
+    .modal-header {
+      padding: 22px 26px 18px; border-bottom: 1px solid var(--g100);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .modal-header h3 { font-size: 16px; font-weight: 800; color: var(--g900); }
+    .modal-close {
+      background: var(--g100); border: none; cursor: pointer; color: var(--g500);
+      font-size: 16px; line-height: 1; padding: 6px 8px; border-radius: 8px;
+      transition: background .15s, color .15s;
+    }
+    .modal-close:hover { background: var(--g200); color: var(--g900); }
+    .modal-body { padding: 22px 26px; overflow-y: auto; flex: 1; }
+    .modal-footer {
+      padding: 16px 26px; border-top: 1px solid var(--g100);
+      display: flex; gap: 10px; justify-content: flex-end; flex-shrink: 0;
+      background: var(--g50);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 700; color: var(--g600, #4b5563);
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; border: 1.5px solid var(--g200); border-radius: var(--r-sm);
+      padding: 10px 13px; font-size: 14px; font-family: inherit; color: var(--g900);
+      background: #fff; outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--p400); box-shadow: 0 0 0 3px rgba(139,92,246,.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 160px; line-height: 1.7; }
+    .form-group .hint { font-size: 11px; color: var(--g400); margin-top: 5px; line-height: 1.5; }
+    .form-error-msg { font-size: 12px; color: #dc2626; margin-top: 8px; display: none; font-weight: 500; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--p700), var(--p500)); color: #fff;
+      border: none; border-radius: var(--r-sm); padding: 10px 22px;
+      font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: opacity .2s; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 7px;
+      box-shadow: 0 2px 8px rgba(109,40,217,.25);
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary {
+      background: #fff; color: var(--g700); border: 1.5px solid var(--g200);
+      border-radius: var(--r-sm); padding: 10px 20px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: border-color .2s, background .2s;
+    }
+    .btn-secondary:hover { border-color: var(--g300); background: var(--g50); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--g900); color: #fff; font-size: 13px; font-weight: 600;
+      padding: 13px 24px; border-radius: 32px; box-shadow: 0 6px 24px rgba(0,0,0,.22);
+      opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: linear-gradient(135deg, #065f46, #10b981); }
+    .toast.error   { background: linear-gradient(135deg, #991b1b, #ef4444); }
+
+    @media (max-width: 600px) {
+      header { padding: 28px 20px 52px; }
+      .header-badge { display: none; }
+      .search-wrap, .filter-bar, main { padding-left: 16px; padding-right: 16px; }
+      .script-body { padding: 20px; }
+      footer { padding: 20px 16px 32px; }
+      .detail-actions { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="header-icon">📋</div>
+      <div class="header-text">
+        <h1>Portal de Scripts — RH Benefícios</h1>
+        <p>Roteiros de atendimento centralizados para toda a equipe</p>
+      </div>
+      <div class="header-badge" id="total-badge"></div>
+    </div>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Buscar scripts, categorias, responsáveis…" autocomplete="off" />
+      <button id="clear-btn" aria-label="Limpar busca">✕</button>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-status="todos">Todos</button>
+    <button class="filter-btn" data-status="Ativo">✅ Ativos</button>
+    <button class="filter-btn" data-status="Rascunho">📝 Rascunho</button>
+    <button class="filter-btn" data-status="Revisão">🔍 Revisão</button>
+  </div>
+
+  <main>
+
+    <div id="view-cats">
+      <div class="section-header">
+        <p class="section-label" style="margin-bottom:0">Categorias</p>
+        <button class="novo-script-btn" id="btn-novo-script">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo Script
+        </button>
+      </div>
+      <div id="cat-list-wrap"></div>
+    </div>
+
+    <div id="view-list">
+      <button class="back-btn" id="back-to-cats">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar para categorias
+      </button>
+      <div class="cat-header">
+        <div class="ch-icon" id="sl-icon"></div>
+        <h2 id="sl-title"></h2>
+        <span class="ch-count" id="sl-count"></span>
+        <button class="novo-script-btn" id="btn-novo-na-cat" style="margin-left:8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo
+        </button>
+      </div>
+      <div class="script-items" id="sl-items"></div>
+    </div>
+
+    <div id="view-detail">
+      <button class="back-btn" id="back-to-list">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar para lista
+      </button>
+      <div class="detail-header">
+        <h2 id="sd-title"></h2>
+        <div class="detail-actions">
+          <button class="edit-btn" id="edit-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+          <button class="copy-btn" id="copy-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar script
+          </button>
+          <button class="delete-btn" id="delete-btn" title="Excluir script">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="sd-meta" class="detail-meta" style="display:none"></div>
+      <div id="sd-tags"></div>
+      <div class="script-body" id="sd-body"></div>
+    </div>
+
+    <div id="view-search">
+      <p class="section-label" id="result-count"></p>
+      <div id="result-list"></div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-info">
+      <strong>Portal de Scripts — RH Benefícios</strong>
+      Dados armazenados no Supabase
+    </div>
+    <div class="footer-right">
+      <span class="db-status disconnected" id="db-status">⏳ Conectando…</span>
+      <button class="refresh-btn" id="refresh-btn" title="Recarregar dados">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </footer>
+
+  <!-- MODAL: NOVO / EDITAR SCRIPT -->
+  <div class="modal-overlay" id="modal-script" role="dialog" aria-modal="true" aria-labelledby="modal-script-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-script-title">✏️ Novo Script</h3>
+        <button class="modal-close" data-close="modal-script" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="form-id" />
+        <div class="form-group">
+          <label>Categoria *</label>
+          <input type="text" id="form-categoria" placeholder="Ex: Vale Refeição, Convênio Médico…" list="categorias-list" />
+          <datalist id="categorias-list"></datalist>
+        </div>
+        <div class="form-group">
+          <label>Ícone</label>
+          <input type="text" id="form-icone" placeholder="Ex: 🍽️ 🚌 🏥" maxlength="8" />
+          <div class="hint">Cole um emoji para identificar a categoria visualmente.</div>
+        </div>
+        <div class="form-group">
+          <label>Nome do Script *</label>
+          <input type="text" id="form-nome" placeholder="Ex: Inclusão de Dependente" />
+        </div>
+        <div class="form-group">
+          <label>Tags</label>
+          <input type="text" id="form-tags" placeholder="inclusão, dependente, convênio" />
+          <div class="hint">Separe as tags por vírgula. Facilitam a busca.</div>
+        </div>
+        <div class="form-group">
+          <label>Texto do Script *</label>
+          <textarea id="form-texto" placeholder="Cole aqui o script de atendimento completo…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Responsável</label>
+          <input type="text" id="form-responsavel" placeholder="Ex: Thamirys Cirqueira" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Status</label>
+          <select id="form-status">
+            <option value="Ativo">✅ Ativo</option>
+            <option value="Rascunho">📝 Rascunho</option>
+            <option value="Revisão">🔍 Revisão</option>
+          </select>
+        </div>
+        <div class="form-error-msg" id="form-error">Preencha os campos obrigatórios: Categoria, Nome e Texto.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-script">Cancelar</button>
+        <button class="btn-primary" id="btn-salvar-script">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRMAR EXCLUSÃO -->
+  <div class="modal-overlay" id="modal-delete" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <h3 id="modal-delete-title">🗑️ Excluir Script</h3>
+        <button class="modal-close" data-close="modal-delete" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--g700);line-height:1.7">
+          Tem certeza que deseja excluir o script <strong id="delete-script-name"></strong>?<br>
+          <span style="color:var(--g400);font-size:13px">Esta ação não pode ser desfeita.</span>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-delete">Cancelar</button>
+        <button class="btn-primary" id="btn-confirmar-delete" style="background:linear-gradient(135deg,#991b1b,#ef4444);box-shadow:0 2px 8px rgba(239,68,68,.3)">
+          Excluir permanentemente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SUPABASE_URL = "https://wlnrcasekzdfvrubfqpd.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_o1q58QyAAWmDoH4QgKgswA_5YZ4ElzL";
+  var TABLE        = "scripts";
+
+  var DATA          = [];
+  var currentCatId  = null;
+  var currentScript = null;
+  var activeFilter  = "todos";
+
+  /* ── SUPABASE API ── */
+  function apiHeaders() {
+    return { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY,
+             "Content-Type": "application/json", "Prefer": "return=representation" };
+  }
+  function apiUrl(q) { return SUPABASE_URL + "/rest/v1/" + TABLE + (q ? "?" + q : ""); }
+  function apiFetch(method, q, body) {
+    return fetch(apiUrl(q), { method: method, headers: apiHeaders(), body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t || "HTTP " + r.status); });
+        return r.status === 204 ? null : r.json();
+      });
+  }
+  function dbSelect()        { return apiFetch("GET",    "select=*&order=categoria,nome"); }
+  function dbInsert(row)     { return apiFetch("POST",   null, row); }
+  function dbUpdate(id, row) { return apiFetch("PATCH",  "id=eq." + id, row); }
+  function dbDelete(id)      { return apiFetch("DELETE", "id=eq." + id); }
+
+  /* ── HELPERS ── */
+  function esc(s) {
+    return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function fmtDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  }
+  function showToast(msg, type) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.className = "toast " + (type || ""); t.classList.add("show");
+    setTimeout(function () { t.classList.remove("show"); }, 3000);
+  }
+  function setStatus(ok) {
+    var el = document.getElementById("db-status");
+    el.className   = "db-status " + (ok ? "connected" : "disconnected");
+    el.textContent = ok ? "✅ Supabase conectado" : "⚠️ Sem conexão";
+  }
+
+  /* ── CONVERTER ROWS EM CATEGORIAS ── */
+  function rowsToData(rows) {
+    var map = {}, order = [];
+    rows.forEach(function (r) {
+      var cat = (r.categoria || "Sem categoria").trim();
+      if (!map[cat]) {
+        var catId = "cat_" + cat.replace(/\s+/g,"_").toLowerCase().replace(/[^a-z0-9_]/g,"");
+        map[cat] = { id: catId, name: cat, icon: r.icone || "📁", scripts: [] };
+        order.push(cat);
+      }
+      if (r.icone) map[cat].icon = r.icone;
+      var tags = r.tags ? r.tags.split(",").map(function (t) { return t.trim(); }).filter(Boolean) : [];
+      var sid  = r.id || r._id || "";
+      map[cat].scripts.push({ dbId: sid, id: "s_" + sid, name: r.nome || "",
+        tags: tags, body: r.texto || "", owner: r.responsavel || "",
+        status: r.status || "Ativo", createdAt: r.created_at || "", updatedAt: r.updated_at || "", raw: r });
+    });
+    return order.map(function (n) { return map[n]; });
+  }
+
+  /* ── FILTRO POR STATUS ── */
+  function filteredScripts(scripts) {
+    if (activeFilter === "todos") return scripts;
+    return scripts.filter(function (s) { return s.status === activeFilter; });
+  }
+
+  /* ── CARREGAR ── */
+  function carregarDados(onDone) {
+    mostrarLoading();
+    dbSelect()
+      .then(function (rows) {
+        DATA = rowsToData(rows);
+        buildCatList(); updateBadge(); atualizarDatalist(); setStatus(true);
+        if (onDone) onDone();
+      })
+      .catch(function (err) { mostrarErro(err); setStatus(false); });
+  }
+
+  function mostrarLoading() {
+    document.getElementById("cat-list-wrap").innerHTML =
+      '<div class="loading-state"><div class="loading-spinner"></div><p>Carregando scripts…</p></div>';
+  }
+  function mostrarErro(err) {
+    document.getElementById("cat-list-wrap").innerHTML =
+      '<div class="error-state"><span class="emoji">⚠️</span><h3>Não foi possível carregar</h3>' +
+      '<p>Verifique a conexão com o Supabase.</p>' +
+      '<button class="btn-primary" id="btn-retry">Tentar novamente</button></div>';
+    document.getElementById("btn-retry").addEventListener("click", function () { carregarDados(); });
+    console.error("[Portal]", err);
+  }
+
+  /* ── NAVEGAÇÃO ── */
+  function showView(name) {
+    ["cats","list","detail","search"].forEach(function (v) {
+      document.getElementById("view-" + v).style.display = v === name ? "block" : "none";
+    });
+    var fb = document.getElementById("filter-bar");
+    fb.style.display = (name === "cats" || name === "list") ? "flex" : "none";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function findById(arr, id) { return arr.find(function (x) { return x.id === id; }) || null; }
+  function goToCats(push) {
+    currentCatId = null; showView("cats");
+    if (push !== false && window.history && window.history.pushState)
+      window.history.pushState({ view: "cats" }, "");
+  }
+  window.addEventListener("popstate", function (e) {
+    var s = e.state;
+    if (!s) { goToCats(false); return; }
+    if      (s.view === "cats")   goToCats(false);
+    else if (s.view === "list" && currentCatId) renderList(currentCatId, false);
+    else if (s.view === "detail") showView("detail");
+    else goToCats(false);
+  });
+  if (window.history && window.history.replaceState) window.history.replaceState({ view: "cats" }, "");
+  showView("cats");
+
+  /* ── FILTROS ── */
+  document.querySelectorAll(".filter-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".filter-btn").forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      activeFilter = btn.getAttribute("data-status");
+      if (currentCatId) renderList(currentCatId, false);
+      else buildCatList();
+    });
+  });
+
+  /* ── TELA: CATEGORIAS ── */
+  function buildCatList() {
+    var wrap = document.getElementById("cat-list-wrap");
+    wrap.innerHTML = "";
+    var filtered = DATA.filter(function (cat) { return filteredScripts(cat.scripts).length > 0; });
+    if (!filtered.length) {
+      wrap.innerHTML = '<div class="empty"><span class="emoji">📭</span>' +
+        '<h3>Nenhum script encontrado</h3>' +
+        '<p>Clique em <strong>Novo Script</strong> para adicionar o primeiro roteiro da equipe.</p></div>';
+      return;
+    }
+    var list = document.createElement("div");
+    list.className = "cat-list";
+    filtered.forEach(function (cat, idx) {
+      var count = filteredScripts(cat.scripts).length;
+      var row = document.createElement("div");
+      row.className = "cat-row";
+      row.setAttribute("role","button"); row.setAttribute("tabindex","0");
+      row.style.animationDelay = (idx * 0.05) + "s";
+      row.innerHTML =
+        '<div class="cr-icon">' + esc(cat.icon) + '</div>' +
+        '<div class="cr-info"><div class="cr-name">' + esc(cat.name) + '</div>' +
+        '<div class="cr-meta">' + count + ' script' + (count !== 1 ? "s" : "") + '</div></div>' +
+        '<span class="cr-badge">' + count + '</span><span class="cr-arrow">›</span>';
+      (function (cid) {
+        row.addEventListener("click", function () { openCategory(cid); });
+        row.addEventListener("keydown", function (e) { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openCategory(cid); } });
+      })(cat.id);
+      list.appendChild(row);
+    });
+    wrap.appendChild(list);
+  }
+
+  function updateBadge() {
+    var tot = DATA.reduce(function (a, c) { return a + c.scripts.length; }, 0);
+    document.getElementById("total-badge").textContent = tot + " scripts · " + DATA.length + " categoria" + (DATA.length !== 1 ? "s" : "");
+  }
+  function atualizarDatalist() {
+    var dl = document.getElementById("categorias-list"); dl.innerHTML = "";
+    DATA.forEach(function (cat) { var o = document.createElement("option"); o.value = cat.name; dl.appendChild(o); });
+  }
+
+  /* ── TELA: LISTA ── */
+  function openCategory(catId) { currentCatId = catId; renderList(catId, true); }
+  function renderList(catId, push) {
+    var cat = findById(DATA, catId);
+    if (!cat) { goToCats(push); return; }
+    currentCatId = catId;
+    var scripts = filteredScripts(cat.scripts);
+    document.getElementById("sl-icon").textContent  = cat.icon;
+    document.getElementById("sl-title").textContent = cat.name;
+    document.getElementById("sl-count").textContent = scripts.length + " script" + (scripts.length !== 1 ? "s" : "");
+    var container = document.getElementById("sl-items");
+    container.innerHTML = "";
+    if (!scripts.length) {
+      container.innerHTML = '<div class="empty"><span class="emoji">🔍</span>' +
+        '<h3>Nenhum script com esse filtro</h3><p>Tente outro filtro ou adicione um novo script.</p></div>';
+    } else {
+      scripts.forEach(function (s, i) {
+        var item = document.createElement("div");
+        item.className = "script-item";
+        item.setAttribute("role","button"); item.setAttribute("tabindex","0");
+        item.style.animationDelay = (i * 0.06) + "s";
+        var statusHtml = s.status && s.status !== "Ativo"
+          ? '<span class="status-badge status-' + s.status.toLowerCase().replace("ã","a") + '">' + esc(s.status) + '</span>' : "";
+        var ownerHtml = s.owner ? '<div class="si-owner">👤 ' + esc(s.owner) + '</div>' : "";
+        var dateHtml  = s.updatedAt
+          ? '<div class="si-date">🕐 ' + fmtDate(s.updatedAt) + '</div>'
+          : (s.createdAt ? '<div class="si-date">📅 ' + fmtDate(s.createdAt) + '</div>' : "");
+        item.innerHTML =
+          '<div style="flex:1;min-width:0">' +
+            '<div class="si-name">' + esc(s.name) + statusHtml + '</div>' +
+            '<div class="tags">' + s.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>' +
+            '<div class="si-meta">' + ownerHtml + dateHtml + '</div>' +
+          '</div><span class="si-arrow">›</span>';
+        (function (script) {
+          item.addEventListener("click", function () { openScript(script); });
+          item.addEventListener("keydown", function (e) { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openScript(script); } });
+        })(s);
+        container.appendChild(item);
+      });
+    }
+    showView("list");
+    if (push !== false && window.history && window.history.pushState)
+      window.history.pushState({ view: "list", catId: catId }, "");
+  }
+
+  /* ── TELA: DETALHE ── */
+  var SVG_COPY  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  var SVG_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  function openScript(script) {
+    currentScript = script;
+    document.getElementById("sd-title").textContent = script.name;
+    document.getElementById("sd-body").textContent  = script.body;
+    document.getElementById("sd-tags").innerHTML    =
+      script.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
+    /* meta bar */
+    var meta = document.getElementById("sd-meta");
+    var metaItems = [];
+    if (script.owner)     metaItems.push('<div class="detail-meta-item">👤 Responsável: <strong>' + esc(script.owner) + '</strong></div>');
+    if (script.status)    metaItems.push('<div class="detail-meta-item">📌 Status: <strong>' + esc(script.status) + '</strong></div>');
+    if (script.createdAt) metaItems.push('<div class="detail-meta-item">📅 Criado em: <strong>' + fmtDate(script.createdAt) + '</strong></div>');
+    if (script.updatedAt) metaItems.push('<div class="detail-meta-item">🕐 Atualizado: <strong>' + fmtDate(script.updatedAt) + '</strong></div>');
+    if (metaItems.length) { meta.innerHTML = metaItems.join(""); meta.style.display = "flex"; }
+    else meta.style.display = "none";
+    var copyBtn = document.getElementById("copy-btn");
+    copyBtn.innerHTML = SVG_COPY + " Copiar script"; copyBtn.classList.remove("copied");
+    showView("detail");
+    if (window.history && window.history.pushState)
+      window.history.pushState({ view: "detail", catId: currentCatId }, "");
+  }
+
+  document.getElementById("back-to-cats").addEventListener("click", function () { window.history.back(); });
+  document.getElementById("back-to-list").addEventListener("click", function () { window.history.back(); });
+
+  document.getElementById("copy-btn").addEventListener("click", function () {
+    if (!currentScript) return;
+    var text = currentScript.body; var btn = this;
+    function markCopied() {
+      btn.innerHTML = SVG_CHECK + " Copiado!"; btn.classList.add("copied");
+      setTimeout(function () { btn.innerHTML = SVG_COPY + " Copiar script"; btn.classList.remove("copied"); }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(text).then(markCopied).catch(function () { fallbackCopy(text, markCopied); });
+    else fallbackCopy(text, markCopied);
+  });
+  function fallbackCopy(text, cb) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0;";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand("copy"); cb(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  /* ── MODAL ── */
+  function openModal(id)  { document.getElementById(id).classList.add("open"); }
+  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+  document.querySelectorAll("[data-close]").forEach(function (btn) {
+    btn.addEventListener("click", function () { closeModal(btn.getAttribute("data-close")); });
+  });
+  document.querySelectorAll(".modal-overlay").forEach(function (ov) {
+    ov.addEventListener("click", function (e) { if (e.target === ov) closeModal(ov.id); });
+  });
+
+  function abrirModalNovo(cat) {
+    document.getElementById("modal-script-title").textContent = "✏️ Novo Script";
+    ["form-id","form-categoria","form-icone","form-nome","form-tags","form-texto","form-responsavel"].forEach(function (id) {
+      document.getElementById(id).value = id === "form-categoria" ? (cat || "") : "";
+    });
+    document.getElementById("form-status").value = "Ativo";
+    document.getElementById("form-error").style.display = "none";
+    document.getElementById("btn-salvar-script").disabled = false;
+    openModal("modal-script");
+    setTimeout(function () { document.getElementById("form-categoria").focus(); }, 120);
+  }
+  function abrirModalEditar(script) {
+    document.getElementById("modal-script-title").textContent = "✏️ Editar Script";
+    var r = script.raw;
+    document.getElementById("form-id").value          = r.id;
+    document.getElementById("form-categoria").value   = r.categoria   || "";
+    document.getElementById("form-icone").value       = r.icone       || "";
+    document.getElementById("form-nome").value        = r.nome        || "";
+    document.getElementById("form-tags").value        = r.tags        || "";
+    document.getElementById("form-texto").value       = r.texto       || "";
+    document.getElementById("form-responsavel").value = r.responsavel || "";
+    document.getElementById("form-status").value      = r.status      || "Ativo";
+    document.getElementById("form-error").style.display = "none";
+    document.getElementById("btn-salvar-script").disabled = false;
+    openModal("modal-script");
+    setTimeout(function () { document.getElementById("form-nome").focus(); }, 120);
+  }
+
+  document.getElementById("btn-novo-script").addEventListener("click", function () { abrirModalNovo(); });
+  document.getElementById("btn-novo-na-cat").addEventListener("click", function () {
+    var cat = currentCatId ? findById(DATA, currentCatId) : null;
+    abrirModalNovo(cat ? cat.name : "");
+  });
+  document.getElementById("edit-btn").addEventListener("click", function () {
+    if (currentScript) abrirModalEditar(currentScript);
+  });
+
+  document.getElementById("btn-salvar-script").addEventListener("click", function () {
+    var id = document.getElementById("form-id").value.trim();
+    var categoria = document.getElementById("form-categoria").value.trim();
+    var icone     = document.getElementById("form-icone").value.trim();
+    var nome      = document.getElementById("form-nome").value.trim();
+    var tags      = document.getElementById("form-tags").value.trim();
+    var texto     = document.getElementById("form-texto").value.trim();
+    var resp      = document.getElementById("form-responsavel").value.trim();
+    var status    = document.getElementById("form-status").value;
+    var errEl     = document.getElementById("form-error");
+    var saveBtn   = this;
+    if (!categoria || !nome || !texto) { errEl.style.display = "block"; return; }
+    errEl.style.display = "none";
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<div style="width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite"></div> Salvando…';
+    var now = new Date().toISOString();
+    var row = { categoria: categoria, icone: icone||null, nome: nome, tags: tags||null,
+                texto: texto, responsavel: resp||null, status: status, updated_at: now };
+    var op = id ? dbUpdate(id, row) : dbInsert(Object.assign({}, row, { created_at: now }));
+    op.then(function () {
+      closeModal("modal-script");
+      showToast(id ? "✅ Script atualizado!" : "✅ Script criado!", "success");
+      carregarDados(function () {
+        if (id) {
+          var updated = null;
+          DATA.forEach(function (c) { c.scripts.forEach(function (s) { if (s.raw.id == id) updated = s; }); });
+          if (updated) openScript(updated);
+        } else if (currentCatId) {
+          var c = findById(DATA, currentCatId);
+          if (!c) DATA.forEach(function (x) { if (x.name === categoria) currentCatId = x.id; });
+          renderList(currentCatId, false);
+        }
+      });
+    }).catch(function (err) {
+      showToast("❌ Erro ao salvar: " + err.message, "error");
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar';
+    });
+  });
+
+  /* ── EXCLUIR ── */
+  document.getElementById("delete-btn").addEventListener("click", function () {
+    if (!currentScript) return;
+    document.getElementById("delete-script-name").textContent = '"' + currentScript.name + '"';
+    openModal("modal-delete");
+  });
+  document.getElementById("btn-confirmar-delete").addEventListener("click", function () {
+    if (!currentScript) return;
+    var btn = this; btn.disabled = true; btn.textContent = "Excluindo…";
+    dbDelete(currentScript.dbId)
+      .then(function () {
+        closeModal("modal-delete"); showToast("🗑️ Script excluído.", "");
+        var catId = currentCatId;
+        carregarDados(function () {
+          var cat = catId ? findById(DATA, catId) : null;
+          if (cat) renderList(catId, false); else goToCats(false);
+        });
+      })
+      .catch(function (err) {
+        showToast("❌ Erro ao excluir: " + err.message, "error");
+        btn.disabled = false; btn.textContent = "Excluir permanentemente";
+      });
+  });
+
+  /* ── BUSCA ── */
+  var searchInput = document.getElementById("search-input");
+  var clearBtn    = document.getElementById("clear-btn");
+  var searchTO;
+  searchInput.addEventListener("input", function () { clearTimeout(searchTO); searchTO = setTimeout(runSearch, 200); });
+  function runSearch() {
+    var q = searchInput.value.trim().toLowerCase();
+    clearBtn.style.display = q ? "block" : "none";
+    if (!q) { goToCats(false); return; }
+    var results = [];
+    DATA.forEach(function (cat) {
+      filteredScripts(cat.scripts).forEach(function (s) {
+        if ((s.name+" "+s.tags.join(" ")+" "+s.body+" "+s.owner+" "+cat.name).toLowerCase().indexOf(q) !== -1)
+          results.push({ cat: cat, script: s });
+      });
+    });
+    var countEl = document.getElementById("result-count");
+    var listEl  = document.getElementById("result-list");
+    listEl.innerHTML = "";
+    if (!results.length) {
+      countEl.textContent = "Nenhum resultado encontrado";
+      listEl.innerHTML = '<div class="empty"><span class="emoji">🔍</span><h3>Sem resultados</h3><p>Tente outros termos de busca.</p></div>';
+    } else {
+      countEl.textContent = results.length + " resultado" + (results.length !== 1 ? "s" : "") + " encontrado" + (results.length !== 1 ? "s" : "");
+      results.forEach(function (r) {
+        var card = document.createElement("div");
+        card.className = "result-card";
+        card.setAttribute("role","button"); card.setAttribute("tabindex","0");
+        card.innerHTML =
+          '<div class="rc-icon">' + esc(r.cat.icon) + '</div>' +
+          '<div><div class="rc-name">' + esc(r.script.name) + '</div>' +
+          '<div class="rc-cat">' + esc(r.cat.name) + (r.script.owner ? ' · 👤 ' + esc(r.script.owner) : '') + '</div></div>';
+        (function (rc) {
+          card.addEventListener("click", function () {
+            searchInput.value = ""; clearBtn.style.display = "none";
+            currentCatId = rc.cat.id; openScript(rc.script);
+          });
+          card.addEventListener("keydown", function (e) {
+            if (e.key==="Enter"||e.key===" ") { e.preventDefault();
+              searchInput.value = ""; clearBtn.style.display = "none";
+              currentCatId = rc.cat.id; openScript(rc.script); }
+          });
+        })(r);
+        listEl.appendChild(card);
+      });
+    }
+    showView("search");
+  }
+  clearBtn.addEventListener("click", function () {
+    searchInput.value = ""; clearBtn.style.display = "none"; goToCats(false); searchInput.focus();
+  });
+
+  document.getElementById("refresh-btn").addEventListener("click", function () { goToCats(false); carregarDados(); });
+
+  carregarDados();
+})();
+</script>
+</body>
+</html>
