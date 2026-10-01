@@ -1203,14 +1203,14 @@
     openModal("modal-csv");
   });
 
-  /* Lê e faz preview do CSV ao selecionar o arquivo */
+  /* Lê e faz preview do CSV — tenta UTF-8, fallback para Latin-1 (Excel BR) */
   document.getElementById("csv-file-input").addEventListener("change", function (e) {
     var file = e.target.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function (ev) {
+
+    function processText(text) {
       try {
-        csvRows = parseCSV(ev.target.result);
+        csvRows = parseCSV(text);
         renderCSVPreview(csvRows);
         document.getElementById("btn-importar-csv").disabled = csvRows.length === 0;
       } catch (err) {
@@ -1218,8 +1218,22 @@
           '<p style="color:#dc2626;font-size:13px;margin-top:10px">❌ Erro ao ler o arquivo: ' + esc(err.message) + '</p>';
         document.getElementById("btn-importar-csv").disabled = true;
       }
+    }
+
+    /* Tenta UTF-8 primeiro; se tiver caracteres de substituição (◆ ou \uFFFD), relê como Latin-1 */
+    var readerUTF = new FileReader();
+    readerUTF.onload = function (ev) {
+      var text = ev.target.result;
+      if (text.indexOf('\uFFFD') !== -1 || text.indexOf('\u25C6') !== -1) {
+        /* Contém caracteres inválidos — relê como Windows-1252 / Latin-1 */
+        var readerLatin = new FileReader();
+        readerLatin.onload = function (ev2) { processText(ev2.target.result); };
+        readerLatin.readAsText(file, "windows-1252");
+      } else {
+        processText(text);
+      }
     };
-    reader.readAsText(file, "UTF-8");
+    readerUTF.readAsText(file, "UTF-8");
   });
 
   /* Parser CSV — detecta automaticamente separador , ou ; (Excel BR salva com ;) */
