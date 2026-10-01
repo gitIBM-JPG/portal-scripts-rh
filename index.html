@@ -646,7 +646,7 @@
      CONFIGURAÇÃO SUPABASE
   ══════════════════════════════════════════════════════════════ */
   var SUPABASE_URL = "https://wlnrcasekzdfvrubfqpd.supabase.co";
-  var SUPABASE_KEY = "sb_publishable_o1q58QyAAWmDoH4QgKgswA_5YZ4ElzL";
+  var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsbnJjYXNla3pkZnZydWJmcXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNzE1NDAsImV4cCI6MjEwNTY0NzU0MH0.c4vc9tApL3BNwrnMsGGpdR_4HI5AUrlZ2Ajw5P17DZ0";
   var TABLE        = "scripts";
 
   /* ── ESTADO ── */
@@ -1106,7 +1106,9 @@
       })
       .catch(function (err) {
         showToast("❌ Erro ao excluir: " + err.message, "error");
-        btn.disabled = false; btn.textContent = "Excluir";
+        btn.disabled = false;
+        btn.innerHTML = "Excluir";
+        btn.style.cssText = "";
       });
   });
 
@@ -1258,24 +1260,24 @@
     });
 
     var result = [];
+    function cell(row, field) {
+      var p = idx[field];
+      return p !== undefined && p >= 0 && p < row.length ? row[p].trim() : "";
+    }
     for (var r = 1; r < rows.length; r++) {
       var row = rows[r];
-      function cell(field) {
-        var p = idx[field];
-        return p !== undefined && p >= 0 && p < row.length ? row[p].trim() : "";
-      }
-      var cat  = cell("categoria");
-      var nome = cell("nome");
-      var txt  = cell("texto");
+      var cat  = cell(row, "categoria");
+      var nome = cell(row, "nome");
+      var txt  = cell(row, "texto");
       if (!cat || !nome || !txt) continue; /* pula linhas incompletas */
       result.push({
         categoria:   cat,
-        icone:       cell("icone") || null,
+        icone:       cell(row, "icone") || null,
         nome:        nome,
-        tags:        cell("tags")        || null,
+        tags:        cell(row, "tags")        || null,
         texto:       txt,
-        responsavel: cell("responsavel") || null,
-        status:      cell("status")      || "Ativo"
+        responsavel: cell(row, "responsavel") || null,
+        status:      cell(row, "status")      || "Ativo"
       });
     }
     return result;
