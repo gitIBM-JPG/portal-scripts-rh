@@ -1222,9 +1222,14 @@
     reader.readAsText(file, "UTF-8");
   });
 
-  /* Parser CSV simples (suporta aspas duplas e quebras de linha dentro de campos) */
+  /* Parser CSV — detecta automaticamente separador , ou ; (Excel BR salva com ;) */
   function parseCSV(text) {
     var lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+    /* Detecta separador pela primeira linha: se tiver ; usa ;, senão , */
+    var firstLine = lines.split("\n")[0] || "";
+    var SEP = firstLine.indexOf(";") !== -1 ? ";" : ",";
+
     var rows = [], cur = "", inQ = false, cells = [], i;
     for (i = 0; i < lines.length; i++) {
       var c = lines[i];
@@ -1235,7 +1240,7 @@
         } else { cur += c; }
       } else {
         if (c === '"') { inQ = true; }
-        else if (c === ',') { cells.push(cur); cur = ""; }
+        else if (c === SEP) { cells.push(cur); cur = ""; }
         else if (c === '\n') { cells.push(cur); rows.push(cells); cells = []; cur = ""; }
         else { cur += c; }
       }
